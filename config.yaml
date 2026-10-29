@@ -1,0 +1,119 @@
+# ──────────────────────────────────────────────────────────────────
+#  Configuración de la descarga automática
+#
+#  Este es el único archivo que hace falta editar.
+#  Reemplazá cada dato marcado como COMPLETAR por el real.
+#  Las contraseñas NO van acá: van en los secretos de GitHub.
+#
+#  Sangría: cada paso empieza con 2 espacios y un guion ("  - accion: ...")
+#  y sus datos van debajo con 4 espacios. Siempre espacios, nunca tabulaciones.
+# ──────────────────────────────────────────────────────────────────
+
+# Dirección de la página donde se inicia sesión
+pagina_inicio: "https://polooeste.lis-cloud.com:11501/Default"
+
+# Pasos que haría una persona, en orden.
+#
+# En "campo" y "en" va el texto que se ve en pantalla. No tiene que
+# ser exacto: "Exportar" encuentra un botón que dice "Exportar a Excel".
+#
+# Acciones disponibles:
+#   escribir   escribe en un campo           → campo (o selector) + valor_secreto (o valor)
+#   clic       botón, enlace, menú o pestaña → en (o selector)
+#   elegir     opción de una lista           → campo + opcion
+#   tecla      aprieta Enter, Escape o Tab   → tecla
+#   esperar    pausa                         → segundos
+#   ir_a       abre otra dirección           → url
+#   descargar  botón que baja el Excel       → en (o selector), siempre el último paso
+#
+# "en" o "selector":
+#   - "en" lleva el texto que se ve en pantalla:  en: "Login"
+#   - "selector" lleva la clase del elemento (clic derecho > Inspeccionar)
+#     con un punto adelante y entre comillas:
+#       <div class="wis-nav-open-button">          → selector: ".wis-nav-open-button"
+#     Si tiene varias clases, van pegadas y cada una con su punto:
+#       <div class="gr-toolbar-btn filter">        → selector: ".gr-toolbar-btn.filter"
+#     Si el elemento tiene id="algo"               → selector: "#algo"
+#     No uses clases genéricas que se repiten, como "fa", "fa-cog" o "btn".
+#
+# Filtros de una grilla (todos con la misma clase, uno por columna):
+#   "selector" es la clase que comparten y "columna" el título de la columna,
+#   escrito como se ve en la grilla. Se usa el filtro que está debajo del título.
+#     - accion: escribir
+#       selector: ".gr-filter"
+#       columna: "Cód. empresa"
+#       valor: "123"
+#   Funciona igual con "elegir" si el filtro es una lista.
+#
+# Fechas: en "valor" van con el mismo formato que muestra la página.
+#   %d día   %m mes   %Y año (2026)   %y año corto (26)
+#   {ayer:%d/%m/%Y}        → 28/10/2026
+#   {ayer:%d-%m-%y}        → 28-10-26
+#   {ayer:%Y-%m-%d}        → 2026-10-28
+#   {ayer:%Y%m%d}          → 20261028
+#   {ayer:%d/%m/%Y} 00:00  → 28/10/2026 00:00
+#   Con {hoy:...} va la fecha del día en que se ejecuta.
+
+pasos:
+  # 1. Inicio de sesión
+  - accion: escribir
+    campo: "Email"
+    valor_secreto: WEB_USUARIO
+
+  - accion: escribir
+    campo: "Contraseña"
+    valor_secreto: WEB_CLAVE
+
+  - accion: clic
+    en: "Login"
+
+  # 2. Llegar a Foto stock
+  - accion: clic
+    selector: ".wis-nav-open-button"           # despliega el menú de WIS
+
+  - accion: clic
+    selector: ".LSTO000_Section_Access_Stock"  # sección Stock del menú
+
+  - accion: clic
+    selector: ".STO310_Page_Access_Allow"      # acceso a "Foto stock"
+
+  # 3. Filtrar: código de empresa y fecha de ayer
+  - accion: clic
+    selector: ".gr-toolbar-btn.filter"         # ícono que abre el buscador
+
+  - accion: escribir
+    selector: ".gr-filter"
+    columna: "Cód. empresa"
+    valor: "6000"
+
+  - accion: escribir
+    selector: ".gr-filter"
+    columna: "Fecha"                           # título de la columna, tal como se ve
+    valor: "{ayer:%Y%m%d}"                     # fecha de ayer como 20261028
+
+  - accion: tecla
+    tecla: Enter                               # aplica los filtros
+
+  # 4. Descargar
+  - accion: descargar
+    selector: "COMPLETAR"                      # ícono o botón que baja el Excel
+
+# Dónde se guarda el archivo
+sharepoint:
+  # Dirección del sitio. También sirve pegar el enlace para compartir
+  # de cualquier carpeta del sitio.
+  sitio: "polooeste.sharepoint.com/sites/DesarrolloInterno"
+
+  # Carpeta dentro de la biblioteca "Documentos" (tiene que existir).
+  # Si está dentro de otra carpeta, va la ruta completa: "Stock/Foto stock WIS"
+  carpeta: "Foto stock WIS"
+
+  # El sistema descarga el Excel con una serie aleatoria al inicio
+  # ("XXXX - Consulta de stock.xlsx"). Ese nombre se descarta: se guarda
+  # con el nombre de abajo, la fecha del día y la extensión original.
+  # Ejemplo: "Consulta de stock 2026-10-29.xlsx"
+  nombre_archivo: "Consulta de stock {hoy:%Y-%m-%d}"
+
+  # Opcional: si la carpeta está en otra biblioteca que no sea la principal,
+  # sacá el # de la línea siguiente y escribí su nombre.
+  # biblioteca: "Reportes"
