@@ -1,0 +1,65 @@
+# ──────────────────────────────────────────────────────────────────
+#  Configuración de la descarga automática
+#
+#  Este es el único archivo que hace falta editar.
+#  Reemplazá cada dato marcado como COMPLETAR por el real.
+#  Las contraseñas NO van acá: van en los secretos de GitHub.
+# ──────────────────────────────────────────────────────────────────
+
+# Dirección de la página donde se inicia sesión
+pagina_inicio: "https://COMPLETAR"
+
+# Pasos que haría una persona, en orden.
+#
+# En "campo" y "en" va el texto que se ve en pantalla. No tiene que
+# ser exacto: "Exportar" encuentra un botón que dice "Exportar a Excel".
+#
+# Acciones disponibles:
+#   escribir   escribe en un campo           → campo + valor_secreto (o valor)
+#   clic       botón, enlace, menú o pestaña → en
+#   elegir     opción de una lista           → campo + opcion
+#   esperar    pausa                         → segundos
+#   ir_a       abre otra dirección           → url
+#   descargar  botón que baja el Excel       → en   (siempre el último paso)
+#
+# En "valor" y "opcion" se pueden usar fechas, por ejemplo para filtros:
+#   {hoy:%d/%m/%Y}  → 28/10/2026
+#   {ayer:%d/%m/%Y} → 27/10/2026
+
+pasos:
+  - accion: escribir
+    campo: "Usuario"              # confirmar: texto junto al campo de usuario
+    valor_secreto: WEB_USUARIO
+
+  - accion: escribir
+    campo: "Contraseña"           # confirmar: texto junto al campo de contraseña
+    valor_secreto: WEB_CLAVE
+
+  - accion: clic
+    en: "Ingresar"                # confirmar: botón para entrar
+
+  - accion: clic
+    en: "COMPLETAR"               # menú o enlace que lleva a la Consulta de stock
+
+  - accion: descargar
+    en: "COMPLETAR"               # botón que descarga el Excel
+
+# Dónde se guarda el archivo
+sharepoint:
+  # Dirección del sitio. También sirve pegar el enlace para compartir
+  # de cualquier carpeta del sitio.
+  sitio: "polooeste.sharepoint.com/sites/DesarrolloInterno"
+
+  # Carpeta dentro de la biblioteca "Documentos" (tiene que existir).
+  # Si está dentro de otra carpeta, va la ruta completa: "Stock/Foto stock WIS"
+  carpeta: "Foto stock WIS"
+
+  # El sistema descarga el Excel con una serie aleatoria al inicio
+  # ("XXXX - Consulta de stock.xlsx"). Ese nombre se descarta: se guarda
+  # con el nombre de abajo, la fecha del día y la extensión original.
+  # Ejemplo: "Consulta de stock 2026-10-29.xlsx"
+  nombre_archivo: "Consulta de stock {hoy:%Y-%m-%d}"
+
+  # Opcional: si la carpeta está en otra biblioteca que no sea la principal,
+  # sacá el # de la línea siguiente y escribí su nombre.
+  # biblioteca: "Reportes"
